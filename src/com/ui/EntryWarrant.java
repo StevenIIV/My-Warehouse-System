@@ -8,12 +8,19 @@ import com.service.WarehouseBusiness;
 import com.service.WarrantFun;
 import com.ui.tools.MyComboBoxEditor;
 import com.ui.tools.MyTable;
+import com.util.JDBCTool;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.export.JRPdfExporter;
+import net.sf.jasperreports.engine.util.JRLoader;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -39,7 +46,7 @@ public class EntryWarrant extends JPanel implements ActionListener{
     WarehouseBusiness wb=new WarehouseBusiness();
     String[] columnName={"参数","内容"};
     Object[][] titleName={{"仓库名",null},{"货物编号",null},{"数量",null},{"单价",null},{"总价",null},{"授权编码",null},
-            {"事务类型",null},{"时间",null},{"发票号码",null},{"货物名",null},{"规范",null},{"种类",null},{"单位",null},{"供应商",null},{"规范",null},{"管理员",null},{"查账员",null},{"注释",null}};
+            {"事务类型",null},{"时间",null},{"发票号码",null},{"货物名",null},{"规范",null},{"种类",null},{"单位",null},{"供应商",null},{"监察员",null},{"管理员",null},{"查账员",null},{"注释",null}};
     public EntryWarrant(){
         initComponents();
     }
@@ -110,6 +117,7 @@ public class EntryWarrant extends JPanel implements ActionListener{
         }
         table.setModel(new DefaultTableModel(titleName,columnName));
         table.setRowHeight(30);
+        table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
     }
 
     //刷新table内容
@@ -158,6 +166,7 @@ public class EntryWarrant extends JPanel implements ActionListener{
         button6.setText("打印");
         actionBar.add(button6);
         button6.setBounds(440, 0, 85, 40);
+        button6.addActionListener(this);
 
         //---- label1 ----
         number.setText("<html><font color='red'>"+String.valueOf(pos+1)+"/"+String.valueOf(maxpage)+"</font></html>");
@@ -222,7 +231,7 @@ public class EntryWarrant extends JPanel implements ActionListener{
                         (String) table.getValueAt(16,1),
                         (String) table.getValueAt(17,1));
                 if(res==1){
-                    JOptionPane.showMessageDialog(null, "成功", "SUCCESS",JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "成功", "SUCCESS",JOptionPane.PLAIN_MESSAGE);
                     try {
                         goods= sw.selectEntryWarrant();
                     } catch (SQLException e1) {
@@ -255,7 +264,7 @@ public class EntryWarrant extends JPanel implements ActionListener{
                         (String) table.getValueAt(16,1),
                         (String) table.getValueAt(17,1));
                 if(res==1){
-                    JOptionPane.showMessageDialog(null, "成功", "SUCCESS",JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "成功", "SUCCESS",JOptionPane.PLAIN_MESSAGE);
                     try {
                         goods= sw.selectEntryWarrant();
                     } catch (SQLException e1) {
@@ -272,6 +281,27 @@ public class EntryWarrant extends JPanel implements ActionListener{
         }
         //---- 打印 ----
         else if(e.getSource().equals(button6)){
+            JOptionPane.showMessageDialog(null, "<html><font color='red'>PDF打印成功，请在report文件夹中查看</font></html>", "SUCCESS",JOptionPane.PLAIN_MESSAGE);
+
+            Map<String, Object> parameters = new HashMap<String, Object>();
+            parameters.put("number",table.getValueAt(5,1));
+
+            File jasperFile = new File("report/entry_warrant.jasper");
+            String outPath = "report/entry_warrant.pdf";
+            JasperPrint jasperPrint=null;
+            try {
+                jasperPrint = JasperFillManager.fillReport(jasperFile.getPath(), parameters, new JDBCTool().getThis().getConnection());
+            } catch (JRException e1) {
+                e1.printStackTrace();
+            }
+            JRPdfExporter exporter = new JRPdfExporter();
+            exporter.setParameter(JRExporterParameter.JASPER_PRINT,jasperPrint);
+            exporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, outPath);
+            try {
+                exporter.exportReport();
+            } catch (JRException e1) {
+                e1.printStackTrace();
+            }
 
         }
     }

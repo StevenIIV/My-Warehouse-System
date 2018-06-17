@@ -35,8 +35,11 @@ public class MainFrame extends JFrame {
 
         tabbedPane1.addTab("入库单", new EntryWarrant());
         tabbedPane1.addTab("出库单",new ExitWarrant());
-        tabbedPane1.addTab("本仓",new EntryWarrant());
-        tabbedPane1.addTab("总仓",new EntryWarrant());
+        tabbedPane1.addTab("领料单",new PickWarrant());
+        tabbedPane1.addTab("退料单",new ReturnWarrant());
+        tabbedPane1.addTab("本仓",new DistributeWarehouse());
+        tabbedPane1.addTab("总仓",new GeneralWarehouse());
+        tabbedPane1.addTab("调拨",new AllotPanel());
 
         contentPane.add(tabbedPane1);
         tabbedPane1.setBounds(0, 0, 600, 485);

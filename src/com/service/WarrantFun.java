@@ -32,7 +32,7 @@ public class WarrantFun {
     //显示所有总仓
     public List selectGeneralWarehouse() throws SQLException {
         DBDao db=new DBDao();
-        List list=db.select("SELECT * FROM tb_general_warehouse",4,new Object[]{});
+        List list=db.select("SELECT * FROM tb_general_warehouse",5,new Object[]{});
         if(!list.isEmpty()){
             return list;
         }
@@ -42,6 +42,24 @@ public class WarrantFun {
     public List selectDistributeWarehouse() throws SQLException {
         DBDao db=new DBDao();
         List list=db.select("SELECT * FROM tb_distribute_warehouse",5,new Object[]{});
+        if(!list.isEmpty()){
+            return list;
+        }
+        return null;
+    }
+    //显示所有领料
+    public List selectPickWarrant() throws SQLException {
+        DBDao db=new DBDao();
+        List list=db.select("SELECT * FROM tb_pick_warrant",20,new Object[]{});
+        if(!list.isEmpty()){
+            return list;
+        }
+        return null;
+    }
+    //显示所有退料
+    public List selectReturnWarrant() throws SQLException {
+        DBDao db=new DBDao();
+        List list=db.select("SELECT * FROM tb_return_warrant",20,new Object[]{});
         if(!list.isEmpty()){
             return list;
         }
